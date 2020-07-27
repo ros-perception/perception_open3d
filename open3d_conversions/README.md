@@ -36,18 +36,7 @@ sudo make install
 
 ### open3d_conversions
 
-#### From Source
-
-```bash
-mkdir -p catkin_ws/src
-cd catkin_ws/src
-git clone https://github.com/ros-perception/perception_open3d.git
-cd ..
-catkin config -DCMAKE_BUILD_TYPE=Release
-catkin build open3d_conversions
-```
-
-* Time taken for the conversion functions will be much larger if the package is not built in `Release` mode.
+* In case you are building this package from source, time taken for the conversion functions will be much larger if it is not built in `Release` mode.
 
 ## Usage
 
