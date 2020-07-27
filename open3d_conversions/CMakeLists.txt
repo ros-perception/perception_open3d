@@ -13,7 +13,7 @@ catkin_package(
  INCLUDE_DIRS include
  LIBRARIES open3d_conversions
  CATKIN_DEPENDS roscpp sensor_msgs
- DEPENDS Open3D
+ DEPENDS EIGEN3 Open3D
 )
 
 include_directories(

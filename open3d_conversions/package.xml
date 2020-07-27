@@ -15,6 +15,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
+  <depend>eigen</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
