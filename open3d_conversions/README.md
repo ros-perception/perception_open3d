@@ -73,4 +73,3 @@ Feel free to contact us for any questions:
 * [Pranay Mathur](mailto:matnay17@gmail.com)
 * [Nikhil Khedekar](mailto:nkhedekar@nevada.unr.edu)
 * [Kostas Alexis](mailto:kalexis@unr.edu)
-* [Steve Macenski](mailto:stevenmacenski@gmail.com)
