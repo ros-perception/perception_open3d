@@ -15,27 +15,25 @@
 // GTest
 #include <gtest/gtest.h>
 
-//open3d_conversions
+// open3d_ros
 #include "open3d_conversions/open3d_conversions.h"
 
 // Open3D
 #include <open3d/Open3D.h>
 
 // ROS
-#include <sensor_msgs/PointCloud2.h>
-#include <sensor_msgs/point_cloud2_iterator.h>
+#include "rclcpp/rclcpp.hpp"
+#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <sensor_msgs/point_cloud2_iterator.hpp>
 
-// Boost
-#include <boost/make_shared.hpp>
-
-TEST(ConversionFunctions, open3dToRos_uncolored)
+TEST(ConversionFunctions, open3dToRos2_uncolored)
 {
   open3d::geometry::PointCloud o3d_pc;
   for (int i = 0; i < 5; ++i)
   {
     o3d_pc.points_.push_back(Eigen::Vector3d(0.5 * i, i * i, 10.5 * i));
   }
-  sensor_msgs::PointCloud2 ros_pc2;
+  sensor_msgs::msg::PointCloud2 ros_pc2;
   open3d_conversions::open3dToRos(o3d_pc, ros_pc2, "o3d_frame");
   EXPECT_EQ(ros_pc2.height * ros_pc2.width, o3d_pc.points_.size());
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_x(ros_pc2, "x");
@@ -43,14 +41,14 @@ TEST(ConversionFunctions, open3dToRos_uncolored)
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_z(ros_pc2, "z");
   for (int i = 0; i < 5; i++, ++ros_pc2_x, ++ros_pc2_y, ++ros_pc2_z)
   {
-    const Eigen::Vector3d &point = o3d_pc.points_[i];
+    const Eigen::Vector3d& point = o3d_pc.points_[i];
     EXPECT_EQ(*ros_pc2_x, 0.5 * i);
     EXPECT_EQ(*ros_pc2_y, i * i);
     EXPECT_EQ(*ros_pc2_z, 10.5 * i);
   }
 }
 
-TEST(ConversionFunctions, open3dToRos_colored)
+TEST(ConversionFunctions, open3dToRos2_colored)
 {
   open3d::geometry::PointCloud o3d_pc;
   for (int i = 0; i < 5; ++i)
@@ -58,7 +56,7 @@ TEST(ConversionFunctions, open3dToRos_colored)
     o3d_pc.points_.push_back(Eigen::Vector3d(0.5 * i, i * i, 10.5 * i));
     o3d_pc.colors_.push_back(Eigen::Vector3d(2 * i / 255.0, 5 * i / 255.0, 10 * i / 255.0));
   }
-  sensor_msgs::PointCloud2 ros_pc2;
+  sensor_msgs::msg::PointCloud2 ros_pc2;
   open3d_conversions::open3dToRos(o3d_pc, ros_pc2, "o3d_frame");
   EXPECT_EQ(ros_pc2.height * ros_pc2.width, o3d_pc.points_.size());
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_x(ros_pc2, "x");
@@ -69,11 +67,11 @@ TEST(ConversionFunctions, open3dToRos_colored)
   sensor_msgs::PointCloud2Iterator<uint8_t> ros_pc2_b(ros_pc2, "b");
   for (int i = 0; i < 5; i++, ++ros_pc2_x, ++ros_pc2_y, ++ros_pc2_z, ++ros_pc2_r, ++ros_pc2_g, ++ros_pc2_b)
   {
-    const Eigen::Vector3d &point = o3d_pc.points_[i];
+    const Eigen::Vector3d& point = o3d_pc.points_[i];
     EXPECT_EQ(*ros_pc2_x, 0.5 * i);
     EXPECT_EQ(*ros_pc2_y, i * i);
     EXPECT_EQ(*ros_pc2_z, 10.5 * i);
-    const Eigen::Vector3d &color = o3d_pc.points_[i];
+    const Eigen::Vector3d& color = o3d_pc.points_[i];
     EXPECT_EQ(*ros_pc2_r, 2 * i);
     EXPECT_EQ(*ros_pc2_g, 5 * i);
     EXPECT_EQ(*ros_pc2_b, 10 * i);
@@ -82,7 +80,7 @@ TEST(ConversionFunctions, open3dToRos_colored)
 
 TEST(ConversionFunctions, rosToOpen3d_uncolored)
 {
-  sensor_msgs::PointCloud2 ros_pc2;
+  sensor_msgs::msg::PointCloud2 ros_pc2;
   ros_pc2.header.frame_id = "ros";
   ros_pc2.height = 1;
   ros_pc2.width = 5;
@@ -102,14 +100,15 @@ TEST(ConversionFunctions, rosToOpen3d_uncolored)
     *mod_z = 10.5 * i;
   }
 
-  const sensor_msgs::PointCloud2ConstPtr &ros_pc2_ptr = boost::make_shared<sensor_msgs::PointCloud2>(ros_pc2);
+  const sensor_msgs::msg::PointCloud2::SharedPtr& ros_pc2_ptr =
+    std::make_shared<sensor_msgs::msg::PointCloud2>(ros_pc2);
   open3d::geometry::PointCloud o3d_pc;
   open3d_conversions::rosToOpen3d(ros_pc2_ptr, o3d_pc);
   EXPECT_EQ(ros_pc2_ptr->height * ros_pc2_ptr->width, o3d_pc.points_.size());
   EXPECT_EQ(o3d_pc.HasColors(), false);
   for (unsigned int i = 0; i < 5; i++)
   {
-    const Eigen::Vector3d &point = o3d_pc.points_[i];
+    const Eigen::Vector3d& point = o3d_pc.points_[i];
     EXPECT_EQ(point(0), 0.5 * i);
     EXPECT_EQ(point(1), i * i);
     EXPECT_EQ(point(2), 10.5 * i);
@@ -118,7 +117,7 @@ TEST(ConversionFunctions, rosToOpen3d_uncolored)
 
 TEST(ConversionFunctions, rosToOpen3d_colored)
 {
-  sensor_msgs::PointCloud2 ros_pc2;
+  sensor_msgs::msg::PointCloud2 ros_pc2;
   ros_pc2.header.frame_id = "ros";
   ros_pc2.height = 1;
   ros_pc2.width = 5;
@@ -145,25 +144,26 @@ TEST(ConversionFunctions, rosToOpen3d_colored)
     *mod_b = 10 * i;
   }
 
-  const sensor_msgs::PointCloud2ConstPtr &ros_pc2_ptr = boost::make_shared<sensor_msgs::PointCloud2>(ros_pc2);
+  const sensor_msgs::msg::PointCloud2::SharedPtr& ros_pc2_ptr =
+    std::make_shared<sensor_msgs::msg::PointCloud2>(ros_pc2);
   open3d::geometry::PointCloud o3d_pc;
   open3d_conversions::rosToOpen3d(ros_pc2_ptr, o3d_pc);
   EXPECT_EQ(ros_pc2_ptr->height * ros_pc2_ptr->width, o3d_pc.points_.size());
   EXPECT_EQ(o3d_pc.HasColors(), true);
   for (unsigned int i = 0; i < 5; i++)
   {
-    const Eigen::Vector3d &point = o3d_pc.points_[i];
+    const Eigen::Vector3d& point = o3d_pc.points_[i];
     EXPECT_EQ(point(0), 0.5 * i);
     EXPECT_EQ(point(1), i * i);
     EXPECT_EQ(point(2), 10.5 * i);
-    const Eigen::Vector3d &color = o3d_pc.colors_[i];
+    const Eigen::Vector3d& color = o3d_pc.colors_[i];
     EXPECT_EQ(color(0), 2 * i / 255.0);
     EXPECT_EQ(color(1), 5 * i / 255.0);
     EXPECT_EQ(color(2), 10 * i / 255.0);
   }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
