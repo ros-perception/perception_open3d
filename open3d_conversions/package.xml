@@ -1,5 +1,6 @@
-<?xml version="2.0"?>
-<package format="2">
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>open3d_conversions</name>
   <version>0.1.0</version>
   <description>Provides conversion functions to and from Open3D datatypes</description>
@@ -12,9 +13,9 @@
 
   <author email="matnay17@gmail.com">Pranay Mathur</author>
   <author email="nkhedekar@nevada.unr.edu">Nikhil Khedekar</author>
+  <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
-  <buildtool_depend>ament_cmake</buildtool_depend>
-   <depend>rclcpp</depend>
+  <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
 
   <export>
