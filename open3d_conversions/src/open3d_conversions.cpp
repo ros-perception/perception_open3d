@@ -89,7 +89,8 @@ void rosToOpen3d(
       for (size_t i = 0; i < ros_pc2->height * ros_pc2->width; ++i, ++ros_pc2_x,
         ++ros_pc2_y, ++ros_pc2_z, ++ros_pc2_r, ++ros_pc2_g, ++ros_pc2_b)
       {
-        Eigen::Vector3d(*ros_pc2_x, *ros_pc2_y, *ros_pc2_z);
+        o3d_pc.points_.push_back(
+          Eigen::Vector3d(*ros_pc2_x, *ros_pc2_y, *ros_pc2_z));
         o3d_pc.colors_.push_back(
           Eigen::Vector3d(
             (static_cast<int>(*ros_pc2_r)) / 255.0,
