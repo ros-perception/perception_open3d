@@ -48,7 +48,7 @@ void open3dToRos(
  * open3d::geometry::PointCloud
  *
  * @param ros_pc2 Reference to the sensor_msgs PointCloud2
- * @param o3d_pc Reference to the open3d tgeometry PointCloud
+ * @param o3d_pc Reference to the open3d geometry PointCloud
  * @param skip_colors If true, only xyz fields will be copied
  */
 void rosToOpen3d(
