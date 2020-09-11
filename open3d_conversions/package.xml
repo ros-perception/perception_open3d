@@ -17,6 +17,7 @@
 
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
+  <depend>eigen</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
