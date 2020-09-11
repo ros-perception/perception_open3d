@@ -42,7 +42,7 @@ namespace open3d_conversions
 void open3dToRos(
   const open3d::geometry::PointCloud & pointcloud,
   sensor_msgs::msg::PointCloud2 & ros_pc2,
-  std::string frame_id = "open3d_pointcloud")
+  std::string frame_id = "open3d_pointcloud");
 /**
  * @brief Copy data from a sensor_msgs::msg::PointCloud2 to a
  * open3d::geometry::PointCloud
