@@ -45,9 +45,6 @@ void open3dToRos(
     {
       const Eigen::Vector3d & point = pointcloud.points_[i];
       const Eigen::Vector3d & color = pointcloud.colors_[i];
-
-      const Eigen::Vector3d & point = pointcloud.points_[i];
-      const Eigen::Vector3d & color = pointcloud.colors_[i];
       *ros_pc2_x = point(0);
       *ros_pc2_y = point(1);
       *ros_pc2_z = point(2);
