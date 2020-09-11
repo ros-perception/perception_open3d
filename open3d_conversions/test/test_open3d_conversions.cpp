@@ -43,7 +43,6 @@ TEST(ConversionFunctions, open3dToRos2_uncolored) {
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_y(ros_pc2, "y");
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_z(ros_pc2, "z");
   for (int i = 0; i < 5; i++, ++ros_pc2_x, ++ros_pc2_y, ++ros_pc2_z) {
-    const Eigen::Vector3d & point = o3d_pc.points_[i];
     EXPECT_EQ(*ros_pc2_x, 0.5 * i);
     EXPECT_EQ(*ros_pc2_y, i * i);
     EXPECT_EQ(*ros_pc2_z, 10.5 * i);
@@ -69,11 +68,9 @@ TEST(ConversionFunctions, open3dToRos2_colored) {
   for (int i = 0; i < 5; i++, ++ros_pc2_x, ++ros_pc2_y, ++ros_pc2_z,
     ++ros_pc2_r, ++ros_pc2_g, ++ros_pc2_b)
   {
-    const Eigen::Vector3d & point = o3d_pc.points_[i];
     EXPECT_EQ(*ros_pc2_x, 0.5 * i);
     EXPECT_EQ(*ros_pc2_y, i * i);
     EXPECT_EQ(*ros_pc2_z, 10.5 * i);
-    const Eigen::Vector3d & color = o3d_pc.points_[i];
     EXPECT_EQ(*ros_pc2_r, 2 * i);
     EXPECT_EQ(*ros_pc2_g, 5 * i);
     EXPECT_EQ(*ros_pc2_b, 10 * i);
