@@ -16,28 +16,28 @@ This package contains a set of examples using functions provided by the open3d_c
 
 ## Usage
 
-* Publishers
+* Publishers (Will read ```data/fragment.pcd``` by default if optional path to pcd file not provided)
 
     ```
-    rosrun perception_open3d_examples ex_pub
+    rosrun open3d_conversions_examples ex_pub <path_to_pcd_file/filename.pcd>
     ```
 
 * Subscribers
 
     ```
-    rosrun perception_open3d_examples ex_sub
+    rosrun open3d_conversions_examples ex_sub
     ```
 
 * Conversion times (Will read ```data/fragment.pcd``` by default if optional path to pcd file not provided)
 
     ```
-    rosrun perception_open3d_examples ex_conv_times <path_to_pcd_file/filename.pcd>
+    rosrun open3d_conversions_examples ex_conv_times <path_to_pcd_file/filename.pcd>
     ```
 
 * ICP (Contains an example on carrying out ICP alignment. Requires playing your rosbag with `--clock` in a seperate terminal)
 
     ```
-    roslaunch perception_open3d_examples ex_icp.launch
+    roslaunch open3d_conversions_examples ex_icp.launch
     ```
 
 * Downsampling (Voxel grid filtering)
