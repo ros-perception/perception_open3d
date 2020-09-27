@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>open3d_conversions_examples</name>
+  <version>0.0.1</version>
+  <description>Examples utilizing the functions in the open3d_conversions package</description>
+
+  <maintainer email="matnay17@gmail.com">Pranay Mathur</maintainer>
+  <maintainer email="nkhedekar@nevada.unr.edu">Nikhil Khedekar</maintainer>
+  <maintainer email="stevenmacenski@gmail.com">Steve Macenski</maintainer>
+
+  <license>Apache-2.0</license>
+
+  <author email="matnay17@gmail.com">Pranay Mathur</author>
+  <author email="nkhedekar@nevada.unr.edu">Nikhil Khedekar</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_msgs</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>roslib</depend>
+  <depend>open3d_conversions</depend>
+  <depend>eigen</depend>
+
+  <export>
+
+  </export>
+</package>

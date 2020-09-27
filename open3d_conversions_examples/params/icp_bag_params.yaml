@@ -1,0 +1,18 @@
+icp_threshold: 0.2
+icp_max_iterations: 20
+downsample_voxel_size: 0.01
+world_frame: 'world' #'ned'
+odom_init_frame: 'mapper_init'
+odom_frame: 'mapper'          #'/vicon_vehicle_20' 
+depth_camera_frame: 'l515_depth_optical_frame' #'vicon_vehicle_20'                     
+check_pointcloud_sequence: False
+use_identity_prior: False
+passthrough_prior: False
+use_colorized_icp: True
+use_statistical_outlier_filter: False
+statistical_outlier_filter_num_neighbors: 20
+statistical_outlier_filter_std_ratio: 2.0
+use_radius_outlier_filter: True
+radius_outlier_filter_nb_points: 4
+radius_outlier_filter_radius: 0.1
+num_initialization_pointclouds: 5
