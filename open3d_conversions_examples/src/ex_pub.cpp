@@ -36,8 +36,15 @@ int main(int argc, char** argv)
   // Example XYZRGB Pointcloud
   sensor_msgs::PointCloud2 ros_pc2;
   open3d::geometry::PointCloud o3d_pc;
-  std::string path = ros::package::getPath("open3d_conversions_examples");
-  open3d::io::ReadPointCloud(path + "/data/fragment.pcd", o3d_pc);
+  if (argc == 2)
+  {
+    open3d::io::ReadPointCloud((std::string)argv[1], o3d_pc);
+  }
+  else
+  {
+    std::string path = ros::package::getPath("open3d_conversions_examples");
+    open3d::io::ReadPointCloud(path + "/data/fragment.pcd", o3d_pc);
+  }
   open3d_conversions::open3dToRos(o3d_pc, ros_pc2, "o3d_frame");
   int count = 0;
   while (ros::ok())
