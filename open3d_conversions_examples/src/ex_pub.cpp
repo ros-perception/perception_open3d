@@ -16,9 +16,9 @@
 #include <open3d/Open3D.h>
 
 // ROS
+#include <ros/package.h>
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
-#include <ros/package.h>
 
 // open3d_conversions
 #include "open3d_conversions/open3d_conversions.h"
@@ -26,34 +26,60 @@
 // C++
 #include <string>
 
+class PublisherExample
+{
+private:
+  ros::NodeHandle nh_;
+  ros::Publisher pub_;
+
+public:
+  int count = 0;
+  std::string path;
+  sensor_msgs::PointCloud2 ros_pc2;
+  open3d::geometry::PointCloud o3d_pc;
+
+  PublisherExample(ros::NodeHandle& nh, std::string path) : nh_(nh)
+  {
+    pub_ = nh.advertise<sensor_msgs::PointCloud2>("pointcloud", 1);
+    open3d::io::ReadPointCloud(path, o3d_pc);
+    ros::Rate loop_rate(2);
+    while (ros::ok())
+    {
+      pointCloudConversion(o3d_pc, ros_pc2);
+      ros::spinOnce();
+      loop_rate.sleep();
+      ++count;
+      ROS_INFO("Published %d pointclouds", count);
+    }
+  }
+
+  virtual ~PublisherExample()
+  {
+  }
+
+  void pointCloudConversion(const open3d::geometry::PointCloud& pointcloud, sensor_msgs::PointCloud2& ros_pointcloud)
+  {
+    open3d_conversions::open3dToRos(pointcloud, ros_pointcloud, "o3d_frame");
+    ros_pointcloud.header.stamp = ros::Time::now();
+    pub_.publish(ros_pointcloud);
+  }
+};
+
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "open3d_conversions_ex_pub");
   ros::NodeHandle nh;
-  ros::Rate loop_rate(2);
-  ros::Publisher pubCloud = nh.advertise<sensor_msgs::PointCloud2>("pointcloud", 1);
-
-  // Example XYZRGB Pointcloud
-  sensor_msgs::PointCloud2 ros_pc2;
-  open3d::geometry::PointCloud o3d_pc;
+  std::string path;
+  int count = 0;
   if (argc == 2)
   {
-    open3d::io::ReadPointCloud((std::string)argv[1], o3d_pc);
+    path = (std::string)argv[1];
   }
   else
   {
-    std::string path = ros::package::getPath("open3d_conversions_examples");
-    open3d::io::ReadPointCloud(path + "/data/fragment.pcd", o3d_pc);
+    std::string path_pkg = ros::package::getPath("open3d_conversions_examples");
+    path = path_pkg + "/data/fragment.pcd";
   }
-  open3d_conversions::open3dToRos(o3d_pc, ros_pc2, "o3d_frame");
-  int count = 0;
-  while (ros::ok())
-  {
-    ros_pc2.header.stamp = ros::Time::now();
-    pubCloud.publish(ros_pc2);
-    ++count;
-    ROS_INFO("Published %d pointclouds", count);
-    ros::spinOnce();
-    loop_rate.sleep();
-  }
+
+  PublisherExample publisherExample(nh, path);
 }

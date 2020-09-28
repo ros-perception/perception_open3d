@@ -35,7 +35,7 @@ private:
   int num_iterations_ = 1000;
 
 public:
-  SubscribeFilterPublish(ros::NodeHandle &nh, ros::NodeHandle &pnh) : nh_(nh), pnh_(pnh)
+  SubscribeFilterPublish(ros::NodeHandle& nh, ros::NodeHandle& pnh) : nh_(nh), pnh_(pnh)
   {
     pub_inlier_ = nh_.advertise<sensor_msgs::PointCloud2>("pointcloud_out/inlier_cloud", 1);
     pub_outlier_ = nh_.advertise<sensor_msgs::PointCloud2>("pointcloud_out/outlier_cloud", 1);
@@ -46,9 +46,11 @@ public:
     ROS_INFO("Waiting for pointclouds...");
   }
 
-  ~SubscribeFilterPublish() {}
+  ~SubscribeFilterPublish()
+  {
+  }
 
-  void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud_data)
+  void cloud_callback(const sensor_msgs::PointCloud2ConstPtr& cloud_data)
   {
     ROS_INFO("Recieved pointcloud with sequence number: %i", cloud_data->header.seq);
     open3d::geometry::PointCloud pcd;
@@ -56,9 +58,10 @@ public:
     Eigen::Vector4d plane_model;
     std::vector<size_t, std::allocator<size_t>> inliers;
     std::tie(plane_model, inliers) = pcd.SegmentPlane(distance_threshold_, ransac_n_, num_iterations_);
-    ROS_INFO("Plane equation: %.2fx + %.2fy + %.2fz + %.2f = 0", plane_model[0], plane_model[1], plane_model[2], plane_model[3]);
+    ROS_INFO("Plane equation: %.2fx + %.2fy + %.2fz + %.2f = 0", plane_model[0], plane_model[1], plane_model[2],
+             plane_model[3]);
     std::shared_ptr<open3d::geometry::PointCloud> inlier_cloud = pcd.SelectByIndex(inliers);
-    Eigen::Vector3d inlier_color{1.0, 0, 0};
+    Eigen::Vector3d inlier_color{ 1.0, 0, 0 };
     open3d::geometry::PointCloud painted_cloud = inlier_cloud->PaintUniformColor(inlier_color);
     std::shared_ptr<open3d::geometry::PointCloud> outlier_cloud = pcd.SelectByIndex(inliers, true);
     ROS_INFO("Number of inliers/outliers: %lu/%lu", inlier_cloud->points_.size(), outlier_cloud->points_.size());
@@ -71,7 +74,7 @@ public:
   }
 };
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   ros::init(argc, argv, "open3d_conversions_ex_plane_segmentation");
   ros::NodeHandle nh;

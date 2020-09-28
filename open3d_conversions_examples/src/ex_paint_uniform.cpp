@@ -34,7 +34,7 @@ private:
   double b_ = 0;
 
 public:
-  SubscribeFilterPublish(ros::NodeHandle &nh, ros::NodeHandle &pnh) : nh_(nh), pnh_(pnh)
+  SubscribeFilterPublish(ros::NodeHandle& nh, ros::NodeHandle& pnh) : nh_(nh), pnh_(pnh)
   {
     pub_ = nh_.advertise<sensor_msgs::PointCloud2>("pointcloud_out", 1);
     sub_ = nh_.subscribe("pointcloud_in", 1, &SubscribeFilterPublish::cloud_callback, this);
@@ -44,14 +44,16 @@ public:
     ROS_INFO("Waiting for pointclouds...");
   }
 
-  ~SubscribeFilterPublish() {}
+  ~SubscribeFilterPublish()
+  {
+  }
 
-  void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud_data)
+  void cloud_callback(const sensor_msgs::PointCloud2ConstPtr& cloud_data)
   {
     ROS_INFO("Recieved pointcloud with sequence number: %i", cloud_data->header.seq);
     open3d::geometry::PointCloud pcd;
     open3d_conversions::rosToOpen3d(cloud_data, pcd);
-    Eigen::Vector3d new_color{r_, g_, b_};
+    Eigen::Vector3d new_color{ r_, g_, b_ };
     open3d::geometry::PointCloud painted_pcd = pcd.PaintUniformColor(new_color);
     sensor_msgs::PointCloud2 ros_pc2;
     open3d_conversions::open3dToRos(painted_pcd, ros_pc2, cloud_data->header.frame_id);
@@ -60,7 +62,7 @@ public:
   }
 };
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   ros::init(argc, argv, "open3d_conversions_ex_paint_uniform");
   ros::NodeHandle nh;

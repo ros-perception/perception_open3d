@@ -27,27 +27,31 @@
 #include <string>
 #include <iostream>
 
-int main(int argc, char** argv)
+class ConversionTimesExample
 {
-  ros::init(argc, argv, "open3d_conversions_ex_conv_times");
-  ros::NodeHandle nh;
-  ros::Rate loop_rate(2);
-  ros::Publisher pubCloud = nh.advertise<sensor_msgs::PointCloud2>("pointcloud", 1);
-  while (ros::ok())
+private:
+  ros::NodeHandle nh_;
+  ros::Publisher pub_;
+
+public:
+  std::string path;
+  sensor_msgs::PointCloud2 ros_pc2;
+  open3d::geometry::PointCloud test_o3d_pc;
+  open3d::geometry::PointCloud o3d_pc;
+
+  ConversionTimesExample(ros::NodeHandle& nh, std::string path) : nh_(nh)
   {
-    // Example XYZRGB Pointcloud
-    sensor_msgs::PointCloud2 ros_pc2;
-    open3d::geometry::PointCloud test_o3d_pc;
-    open3d::geometry::PointCloud o3d_pc;
-    if(argc==2)
-    {
-      open3d::io::ReadPointCloud((std::string)argv[1], o3d_pc);
-    }
-    else
-    {
-      std::string path = ros::package::getPath("open3d_conversions_examples");
-      open3d::io::ReadPointCloud(path + "/data/fragment.pcd", o3d_pc);
-    }
+    open3d::io::ReadPointCloud(path, o3d_pc);
+    pub_ = nh_.advertise<sensor_msgs::PointCloud2>("pointcloud", 1);
+    calculateConversionTime(o3d_pc, ros_pc2);
+  }
+
+  virtual ~ConversionTimesExample()
+  {
+  }
+
+  void calculateConversionTime(const open3d::geometry::PointCloud& pointcloud, sensor_msgs::PointCloud2& ros_pointcloud)
+  {
     // Conversion time from Open3D PointCloud to sensor_msgs::PointCloud2
     std::clock_t tic = std::clock();
     open3d_conversions::open3dToRos(o3d_pc, ros_pc2, "o3d_frame");
@@ -60,12 +64,32 @@ int main(int argc, char** argv)
     open3d_conversions::rosToOpen3d(ros_pc2_ptr, test_o3d_pc);
     std::cout << "Conversion time (rosToOpen3d) : " << float(std::clock() - toc) / CLOCKS_PER_SEC * 1000.0 << " ms \n"
               << std::endl;
-
     std::cout << "Number of points: " << o3d_pc.points_.size() << std::endl;
 
     // Visualize result using RViz
     ros_pc2.header.stamp = ros::Time::now();
-    pubCloud.publish(ros_pc2);
+    pub_.publish(ros_pc2);
+  }
+};
+
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "open3d_conversions_ex_conv_times");
+  ros::NodeHandle nh;
+  ros::Rate loop_rate(2);
+  std::string path;
+  if (argc == 2)
+  {
+    path = (std::string)argv[1];
+  }
+  else
+  {
+    std::string path_pkg = ros::package::getPath("open3d_conversions_examples");
+    path = path_pkg + "/data/fragment.pcd";
+  }
+  while (ros::ok())
+  {
+    ConversionTimesExample conversionTimesExample(nh, path);
     ros::spinOnce();
     loop_rate.sleep();
   }

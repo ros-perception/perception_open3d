@@ -32,7 +32,7 @@ private:
   double voxel_size_ = 0.05;
 
 public:
-  SubscribeFilterPublish(ros::NodeHandle &nh, ros::NodeHandle &pnh) : nh_(nh), pnh_(pnh)
+  SubscribeFilterPublish(ros::NodeHandle& nh, ros::NodeHandle& pnh) : nh_(nh), pnh_(pnh)
   {
     pub_ = nh_.advertise<sensor_msgs::PointCloud2>("pointcloud_out", 1);
     sub_ = nh_.subscribe("pointcloud_in", 1, &SubscribeFilterPublish::cloud_callback, this);
@@ -40,9 +40,11 @@ public:
     ROS_INFO("Waiting for pointclouds...");
   }
 
-  ~SubscribeFilterPublish() {}
+  ~SubscribeFilterPublish()
+  {
+  }
 
-  void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud_data)
+  void cloud_callback(const sensor_msgs::PointCloud2ConstPtr& cloud_data)
   {
     ROS_INFO("Recieved pointcloud with sequence number: %i", cloud_data->header.seq);
     open3d::geometry::PointCloud pcd;
@@ -51,11 +53,12 @@ public:
     sensor_msgs::PointCloud2 ros_pc2;
     open3d_conversions::open3dToRos(*filtered_pcd, ros_pc2, cloud_data->header.frame_id);
     pub_.publish(ros_pc2);
-    ROS_INFO("Published downsampled pointcloud with points original/downsampled: %lu/%lu", pcd.points_.size(), filtered_pcd->points_.size());
+    ROS_INFO("Published downsampled pointcloud with points original/downsampled: %lu/%lu", pcd.points_.size(),
+             filtered_pcd->points_.size());
   }
 };
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   ros::init(argc, argv, "open3d_conversions_ex_repub_downsampled");
   ros::NodeHandle nh;
