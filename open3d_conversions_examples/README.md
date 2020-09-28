@@ -34,10 +34,13 @@ This package contains a set of examples using functions provided by the open3d_c
 
 * Downsampling (Voxel grid filtering)
 
+
     ```
     rosrun open3d_conversions_examples ex_downsample
     rosrun open3d_conversions_examples ex_pub
     ```
+    - Parameters:
+        - voxel_size: Voxel size to downsample into
 
 * Statistical Outlier Filtering
 
@@ -45,6 +48,9 @@ This package contains a set of examples using functions provided by the open3d_c
     rosrun open3d_conversions_examples ex_statistical_outlier_removal
     rosrun open3d_conversions_examples ex_pub
     ```
+    - Parameters:
+        - nb_neighbors – Number of neighbors around the target point.
+        - std_ratio - Standard deviation ratio.
 
 * Plane Segmentation
 
@@ -52,6 +58,10 @@ This package contains a set of examples using functions provided by the open3d_c
     rosrun open3d_conversions_examples ex_plane_segmentation
     rosrun open3d_conversions_examples ex_pub
     ```
+    - Parameters:
+        - distance_threshold – Max distance a point can be from the plane model, and still be considered an inlier.
+        - ransac_n  – Number of initial points to be considered inliers in each iteration.
+        - num_iterations – Number of iterations.
 
 * Paint Uniform (Paint all points a single color)
 
@@ -59,3 +69,8 @@ This package contains a set of examples using functions provided by the open3d_c
     rosrun open3d_conversions_examples ex_paint_uniform
     rosrun open3d_conversions_examples ex_pub
     ```
+     - Parameters:
+        - r - Intensity of Red in the PointCloud
+        - g - Intensity of Green in the PointCloud
+        - b - Intensity of Blue in the PointCloud
+
