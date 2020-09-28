@@ -7,8 +7,6 @@ This package contains a set of examples using functions provided by the open3d_c
 * Eigen3
 * Open3D
 * open3d_conversions
-* tf2_ros
-* tf2
 
 ## System Requirements
 
@@ -16,7 +14,7 @@ This package contains a set of examples using functions provided by the open3d_c
 
 ## Usage
 
-* Publishers (Will read ```data/fragment.pcd``` by default if optional path to pcd file not provided)
+* Publishers (Will read `data/fragment.pcd` by default if optional path to pcd file not provided)
 
     ```
     rosrun open3d_conversions_examples ex_pub <path_to_pcd_file/filename.pcd>
@@ -28,16 +26,10 @@ This package contains a set of examples using functions provided by the open3d_c
     rosrun open3d_conversions_examples ex_sub
     ```
 
-* Conversion times (Will read ```data/fragment.pcd``` by default if optional path to pcd file not provided)
+* Conversion times (Will read `data/fragment.pcd` by default if optional path to pcd file not provided)
 
     ```
     rosrun open3d_conversions_examples ex_conv_times <path_to_pcd_file/filename.pcd>
-    ```
-
-* ICP (Contains an example on carrying out ICP alignment. Requires playing your rosbag with `--clock` in a seperate terminal)
-
-    ```
-    roslaunch open3d_conversions_examples ex_icp.launch
     ```
 
 * Downsampling (Voxel grid filtering)

@@ -11,12 +11,6 @@ find_package(
   roscpp
   std_msgs 
   sensor_msgs 
-  geometry_msgs 
-  tf 
-  tf2_ros
-  tf2_msgs 
-  tf2_geometry_msgs
-  nav_msgs
   roslib
   open3d_conversions
 )
@@ -26,15 +20,11 @@ include_directories(${Open3D_LIBRARY_DIRS})
 include_directories(${catkin_INCLUDE_DIRS})
 
 catkin_package(
-CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs tf	tf2_ros tf2_msgs tf2_geometry_msgs nav_msgs roslib open3d_conversions
+CATKIN_DEPENDS roscpp std_msgs sensor_msgs roslib open3d_conversions
 DEPENDS Open3D
 )
 
 #Examples
-add_executable(ex_icp src/ex_icp.cpp) 
-target_link_libraries(ex_icp ${catkin_LIBRARIES} ${Open3D_LIBRARIES}) 
-target_include_directories(ex_icp PUBLIC ${Open3D_INCLUDE_DIRS})
-
 add_executable(ex_conv_times src/ex_conv_times.cpp) 
 target_link_libraries(ex_conv_times ${catkin_LIBRARIES} ${Open3D_LIBRARIES}) 
 target_include_directories(ex_conv_times PUBLIC ${Open3D_INCLUDE_DIRS})
@@ -64,8 +54,8 @@ target_link_libraries(ex_plane_segmentation ${catkin_LIBRARIES} ${Open3D_LIBRARI
 target_include_directories(ex_plane_segmentation PUBLIC ${Open3D_INCLUDE_DIRS})
 
 # Install
-install(TARGETS ex_icp ex_pub ex_sub ex_conv_times
+install(TARGETS ex_pub ex_sub ex_conv_times
 RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-install(DIRECTORY data/ launch/ params/
+install(DIRECTORY data/
 DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/data)

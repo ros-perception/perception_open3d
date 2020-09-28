@@ -17,12 +17,6 @@
   <depend>roscpp</depend>
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
-  <depend>geometry_msgs</depend>
-  <depend>tf</depend>
-  <depend>tf2_ros</depend>
-  <depend>tf2_msgs</depend>
-  <depend>tf2_geometry_msgs</depend>
-  <depend>nav_msgs</depend>
   <depend>roslib</depend>
   <depend>open3d_conversions</depend>
   <depend>eigen</depend>
