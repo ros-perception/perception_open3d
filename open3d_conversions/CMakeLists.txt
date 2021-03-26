@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5.0)
 project(open3d_conversions)
 
 find_package(catkin REQUIRED COMPONENTS
