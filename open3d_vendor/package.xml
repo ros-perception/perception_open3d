@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>open3d_vendor</name>
+  <version>0.1.0</version>
+  <description>The vendor package for Open3D</description>
+
+  <maintainer email="nishimarudai@gmail.com">Daisuke Nishimatsu</maintainer>
+
+  <license>Apache-2.0</license>
+
+  <author email="nishimarudai@gmail.com">Daisuke Nishimatsu</author>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>git</buildtool_depend>
+
+  <depend>libx11</depend>
+  <depend>libxcursor-dev</depend>
+  <depend>libxi-dev</depend>
+  <depend>libxinerama-dev</depend>
+  <depend>libxrandr</depend>
+  <depend>opengl</depend>
+
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
