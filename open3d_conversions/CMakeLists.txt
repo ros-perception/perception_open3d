@@ -38,6 +38,7 @@ add_dependencies(open3d_conversions ${open3d_conversions_EXPORTED_TARGETS} ${cat
 target_link_libraries(open3d_conversions ${catkin_LIBRARIES} ${Open3D_LIBRARIES})
 
 
+## Adapted from fastgicp
 ### Python bindings ###
 if(BUILD_PYTHON_BINDINGS)
   pybind11_add_module(open3d_conversions_py
@@ -70,6 +71,5 @@ if (CATKIN_ENABLE_TESTING)
   catkin_add_gtest(test_open3d_conversions test/test_open3d_conversions.cpp)
   target_link_libraries(test_open3d_conversions open3d_conversions ${catkin_LIBRARIES} ${Open3D_LIBRARIES})
 endif()
-
 
 
