@@ -1,3 +1,4 @@
+
 #include <pybind11/pybind11.h> 
 #include <pybind11/detail/internals.h>
 #include <pybind11/eigen.h>
@@ -8,6 +9,7 @@
 #include <pybind11/stl.h>
 #include <Eigen/Core>
 #include "open3d_conversions/open3d_conversions.h"
+#include "point_cloud2_iterator.h"
 
 PYBIND11_MAKE_OPAQUE(std::vector<Eigen::Vector3d>);
 
