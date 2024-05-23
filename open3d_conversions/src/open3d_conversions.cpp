@@ -15,8 +15,18 @@
 // C++
 #include <memory>
 #include <string>
+#include <sstream>
 
+#include <sensor_msgs/image_encodings.hpp>
 #include "open3d_conversions/open3d_conversions.hpp"
+
+// This is the best we have prior to C++20 std::endian::native
+static bool isLittleEndian(){
+  const int32_t value = 0x01;
+  const std::byte * least_significant_address = 
+    reinterpret_cast<const std::byte *>(&value);
+  return (*least_significant_address == std::byte{0x01});
+}
 
 namespace open3d_conversions
 {
@@ -62,6 +72,42 @@ void open3dToRos(
       *ros_pc2_z = point(2);
     }
   }
+}
+
+void open3dToRos(
+  const open3d::geometry::Image & o3d_img,
+  sensor_msgs::msg::Image & ros_img,
+  std::string encoding,
+  std::string frame_id)
+{
+  const int expected_num_channels = sensor_msgs::image_encodings::numChannels(encoding);
+  const int expected_bytes_per_channel = sensor_msgs::image_encodings::bitDepth(encoding)/8;
+
+  // Verify that the encoding makes sense with the given image
+  if (expected_num_channels != o3d_img.num_of_channels_){
+    std::stringstream ss;
+    ss << "Mismatch between Open3D image encoding and desired embedded encoding"
+       << "You asked for \"" << encoding << "\" which has " << expected_num_channels
+       << "channels but the provided image had " << o3d_img.num_of_channels_ << " channels";
+    throw std::runtime_error(ss.str());
+  }
+
+  if (expected_bytes_per_channel != o3d_img.bytes_per_channel_){
+    std::stringstream ss;
+    ss << "Mismatch between Open3D image encoding and desired embedded encoding"
+       << "You asked for \"" << encoding << "\" which has " << expected_bytes_per_channel
+       << "bytes per channel but the provided image had " << o3d_img.bytes_per_channel_ 
+       << " bytes per channel";
+    throw std::runtime_error(ss.str());
+  }
+
+  ros_img.encoding = encoding;
+  ros_img.header.frame_id = frame_id;
+  ros_img.height = o3d_img.height_;
+  ros_img.width  = o3d_img.width_;
+  ros_img.step   = o3d_img.BytesPerLine();
+  ros_img.data   = o3d_img.data_;
+  ros_img.is_bigendian = !isLittleEndian();
 }
 
 void rosToOpen3d(
@@ -111,4 +157,19 @@ void rosToOpen3d(
     }
   }
 }
+
+void rosToOpen3d(
+  const sensor_msgs::msg::Image & ros_img,
+  open3d::geometry::Image o3d_img)
+{
+  o3d_img.Prepare(
+    ros_img.width,
+    ros_img.height,
+    sensor_msgs::image_encodings::numChannels(ros_img.encoding),
+    sensor_msgs::image_encodings::bitDepth(ros_img.encoding)/8
+  );
+  assert(o3d_img.data_.size() == ros_img.data.size());
+  std::memcpy(o3d_img.data_.data(), ros_img.data.data(), ros_img.data.size());
+}
+
 }  // namespace open3d_conversions

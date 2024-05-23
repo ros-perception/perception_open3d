@@ -17,6 +17,7 @@
 // ROS2
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <sensor_msgs/point_cloud2_iterator.hpp>
+#include <sensor_msgs/msg/image.hpp>
 
 // Open3D
 #include <open3d/Open3D.h>
@@ -43,6 +44,21 @@ void open3dToRos(
   const open3d::geometry::PointCloud & pointcloud,
   sensor_msgs::msg::PointCloud2 & ros_pc2,
   std::string frame_id = "open3d_pointcloud");
+
+/**
+ * @brief Copy data from a open3d::geometry::Image to a 
+ * sensor_msgs::msg::Image
+ * 
+ * @param image Forwarding reference to the open3d geometry Image
+ * @param ros_img Reference to teh sensor_msgs Image
+ * @param frame_id The string to be placed in the frame_id of the Image
+ */
+void open3dToRos(
+  const open3d::geometry::Image & o3d_img,
+  sensor_msgs::msg::Image & ros_img,
+  std::string encoding,
+  std::string frame_id = "open3d_image");
+
 /**
  * @brief Copy data from a sensor_msgs::msg::PointCloud2 to a
  * open3d::geometry::PointCloud
@@ -55,6 +71,17 @@ void rosToOpen3d(
   const sensor_msgs::msg::PointCloud2::SharedPtr & ros_pc2,
   open3d::geometry::PointCloud & o3d_pc,
   bool skip_colors = false);
+
+/**
+ * @brief Copy data from a sensor_msgs::msg::Image to a
+ * open3d::geometry::Image
+ *
+ * @param ros_img Reference to the sensor_msgs Image
+ * @param o3d_img Reference to the open3d geometry Image
+ */
+void rosToOpen3d(
+  const sensor_msgs::msg::Image::SharedPtr ros_img,
+  open3d::geometry::Image & o3d_img);
 
 }  // namespace open3d_conversions
 
