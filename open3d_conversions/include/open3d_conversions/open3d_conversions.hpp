@@ -18,6 +18,7 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <sensor_msgs/point_cloud2_iterator.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/msg/camera_info.hpp>
 
 // Open3D
 #include <open3d/Open3D.h>
@@ -49,14 +50,31 @@ void open3dToRos(
  * @brief Copy data from a open3d::geometry::Image to a 
  * sensor_msgs::msg::Image
  * 
- * @param image Forwarding reference to the open3d geometry Image
- * @param ros_img Reference to teh sensor_msgs Image
+ * @param image Reference to the open3d geometry Image
+ * @param ros_img Reference to the sensor_msgs Image
+ * @param encoding The encoding of the image to use in ROS format
  * @param frame_id The string to be placed in the frame_id of the Image
  */
 void open3dToRos(
   const open3d::geometry::Image & o3d_img,
   sensor_msgs::msg::Image & ros_img,
   std::string encoding,
+  std::string frame_id = "open3d_image");
+
+/**
+ * @brief Copy data from a open3d::camera::PinholeCameraIntrinsic
+ * to a sensor_msgs::msg::CameraInfo
+ * 
+ * @param intrinsic Reference to the camera intrinsic in open3d format 
+ * @param ros_img Reference to the sensor_msgs CameraInfo
+ * @param frame_id The string to be placed in the frame_id of the Image
+ * 
+ * @note Open3D does not record distortion parameters for its images, so
+ * the sensor_msgs Image be labelled as "plumb_bob" with D values of 0
+ */
+void open3dToRos(
+  const open3d::camera::PinholeCameraIntrinsic & intrinsic,
+  sensor_msgs::msg::CameraInfo & camera_info,
   std::string frame_id = "open3d_image");
 
 /**
@@ -80,7 +98,50 @@ void rosToOpen3d(
  * @param o3d_img Reference to the open3d geometry Image
  */
 void rosToOpen3d(
-  const sensor_msgs::msg::Image::SharedPtr ros_img,
+  const sensor_msgs::msg::Image & ros_img,
+  open3d::geometry::Image & o3d_img);
+
+/**
+ * @brief Copy data from a sensor_msgs::msg::CameraInfo
+ * to a open3d::camera::PinholeCameraIntrinsic
+ * 
+ * @param ros_img Reference to the sensor_msgs CameraInfo to populate
+ * @param intrinsic Reference to the open3d PinholeCameraIntrinsic 
+ */
+void rosToOpen3d(
+  const sensor_msgs::msg::CameraInfo & camera_info,
+  open3d::camera::PinholeCameraIntrinsic & intrinsic);
+
+/**
+ * @brief Move data from a open3d::geometry::Image to a
+ * sensor_msgs::msg::Image
+ * 
+ * @param o3d_img Reference to the open3d geometry Image
+ * @param ros_img Reference to the sensor_msgs Image
+ * @param encoding The encoding of the image to use in ROS format
+ * @param frame_id The string to be placed in the frame_id of the Image
+ * 
+ * @note The Open3D image will be in a well defined state after this
+ * operation with width = height = 0, and an empty data vector
+ */
+void moveOpen3dToRos(
+  open3d::geometry::Image && o3d_img,
+  sensor_msgs::msg::Image & ros_img,
+  std::string encoding,
+  std::string frame_id = "open3d_image");
+
+/**
+ * @brief Move data from a sensor_msgs::msg::Image to a
+ * open3d::geometry::Image
+ * 
+ * @param ros_img Reference to the sensor_msgs Image
+ * @param o3d_img Reference to the open3d geometry Image
+ * 
+ * @note The sensor_msgs Image will be a well defined state after this
+ * operation with width = height = 0, and an empty data vector
+ */
+void moveRosToOpen3d(
+  sensor_msgs::msg::Image && ros_img,
   open3d::geometry::Image & o3d_img);
 
 }  // namespace open3d_conversions
