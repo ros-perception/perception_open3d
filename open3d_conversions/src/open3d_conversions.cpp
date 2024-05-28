@@ -21,22 +21,23 @@
 #include "open3d_conversions/open3d_conversions.hpp"
 
 // This is the best we have prior to C++20 std::endian::native
-static bool isLittleEndian(){
+static bool isLittleEndian()
+{
   const int32_t value = 0x01;
-  const std::byte * least_significant_address = 
+  const std::byte * least_significant_address =
     reinterpret_cast<const std::byte *>(&value);
-  return (*least_significant_address == std::byte{0x01});
+  return *least_significant_address == std::byte{0x01};
 }
 
 // Verify that an encoding makes sense with a given image
 static void checkEncodingValidity(
-  const std::string& encoding, 
+  const std::string & encoding,
   const open3d::geometry::Image & o3d_img)
 {
   const int expected_num_channels = sensor_msgs::image_encodings::numChannels(encoding);
-  const int expected_bytes_per_channel = sensor_msgs::image_encodings::bitDepth(encoding)/8;
+  const int expected_bytes_per_channel = sensor_msgs::image_encodings::bitDepth(encoding) / 8;
 
-  if (expected_num_channels != o3d_img.num_of_channels_){
+  if (expected_num_channels != o3d_img.num_of_channels_) {
     std::stringstream ss;
     ss << "Mismatch between Open3D image encoding and desired embedded encoding"
        << "You asked for \"" << encoding << "\" which has " << expected_num_channels
@@ -44,11 +45,11 @@ static void checkEncodingValidity(
     throw std::runtime_error(ss.str());
   }
 
-  if (expected_bytes_per_channel != o3d_img.bytes_per_channel_){
+  if (expected_bytes_per_channel != o3d_img.bytes_per_channel_) {
     std::stringstream ss;
     ss << "Mismatch between Open3D image encoding and desired embedded encoding"
        << "You asked for \"" << encoding << "\" which has " << expected_bytes_per_channel
-       << "bytes per channel but the provided image had " << o3d_img.bytes_per_channel_ 
+       << "bytes per channel but the provided image had " << o3d_img.bytes_per_channel_
        << " bytes per channel";
     throw std::runtime_error(ss.str());
   }
@@ -110,9 +111,9 @@ void open3dToRos(
   ros_img.encoding = encoding;
   ros_img.header.frame_id = frame_id;
   ros_img.height = o3d_img.height_;
-  ros_img.width  = o3d_img.width_;
-  ros_img.step   = o3d_img.BytesPerLine();
-  ros_img.data   = o3d_img.data_;
+  ros_img.width = o3d_img.width_;
+  ros_img.step = o3d_img.BytesPerLine();
+  ros_img.data = o3d_img.data_;
   ros_img.is_bigendian = !isLittleEndian();
 }
 
@@ -124,13 +125,13 @@ void open3dToRos(
   // Intrinsic matrix is 3x3 row-major
   std::fill(camera_info.k.begin(), camera_info.k.end(), 0.0);
   std::fill(camera_info.p.begin(), camera_info.p.end(), 0.0);
-  for (std::size_t i = 0; i < 9; i++){
-    camera_info.k[i] = intrinsic.intrinsic_matrix_(i/3, i%3);
+  for (std::size_t i = 0; i < 9; i++) {
+    camera_info.k[i] = intrinsic.intrinsic_matrix_(i / 3, i % 3);
   }
   // Assuming image from monocular camera
-  for (std::size_t i = 0; i < 12; i++){
-    if (i%4 < 3){
-      camera_info.p[i] = intrinsic.intrinsic_matrix_(i/4, i%4);
+  for (std::size_t i = 0; i < 12; i++) {
+    if (i % 4 < 3) {
+      camera_info.p[i] = intrinsic.intrinsic_matrix_(i / 4, i % 4);
     }
   }
 
@@ -196,7 +197,7 @@ void rosToOpen3d(
     ros_img.width,
     ros_img.height,
     sensor_msgs::image_encodings::numChannels(ros_img.encoding),
-    sensor_msgs::image_encodings::bitDepth(ros_img.encoding)/8
+    sensor_msgs::image_encodings::bitDepth(ros_img.encoding) / 8
   );
   o3d_img.data_ = ros_img.data;
 }
@@ -205,11 +206,11 @@ void rosToOpen3d(
   const sensor_msgs::msg::CameraInfo & camera_info,
   open3d::camera::PinholeCameraIntrinsic & intrinsic)
 {
-  intrinsic.width_  = camera_info.width;
+  intrinsic.width_ = camera_info.width;
   intrinsic.height_ = camera_info.height;
-  for (std::size_t row = 0; row < 3; row++){
-    for (std::size_t col = 0; col < 3; col++){
-      intrinsic.intrinsic_matrix_(row, col) = camera_info.k[3*row + col];
+  for (std::size_t row = 0; row < 3; row++) {
+    for (std::size_t col = 0; col < 3; col++) {
+      intrinsic.intrinsic_matrix_(row, col) = camera_info.k[3 * row + col];
     }
   }
 }
@@ -224,10 +225,10 @@ void moveOpen3dToRos(
   ros_img.encoding = encoding;
   ros_img.header.frame_id = frame_id;
   ros_img.height = o3d_img.height_;
-  ros_img.width  = o3d_img.width_;
-  ros_img.step   = o3d_img.BytesPerLine();
+  ros_img.width = o3d_img.width_;
+  ros_img.step = o3d_img.BytesPerLine();
   ros_img.is_bigendian = !isLittleEndian();
-  ros_img.data   = std::move(o3d_img.data_);
+  ros_img.data = std::move(o3d_img.data_);
 
   // Make sure to leave everything in a well defined state
   o3d_img.Clear();
@@ -241,7 +242,7 @@ void moveRosToOpen3d(
     ros_img.width,
     ros_img.height,
     sensor_msgs::image_encodings::numChannels(ros_img.encoding),
-    sensor_msgs::image_encodings::bitDepth(ros_img.encoding)/8
+    sensor_msgs::image_encodings::bitDepth(ros_img.encoding) / 8
   );
   o3d_img.data_ = std::move(ros_img.data);
 
