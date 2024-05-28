@@ -17,17 +17,9 @@
 #include <string>
 #include <sstream>
 
+#include <rcpputils/endian.hpp>
 #include <sensor_msgs/image_encodings.hpp>
 #include "open3d_conversions/open3d_conversions.hpp"
-
-// This is the best we have prior to C++20 std::endian::native
-static bool isLittleEndian()
-{
-  const int32_t value = 0x01;
-  const std::byte * least_significant_address =
-    reinterpret_cast<const std::byte *>(&value);
-  return *least_significant_address == std::byte{0x01};
-}
 
 // Verify that an encoding makes sense with a given image
 static void checkEncodingValidity(
@@ -114,7 +106,7 @@ void open3dToRos(
   ros_img.width = o3d_img.width_;
   ros_img.step = o3d_img.BytesPerLine();
   ros_img.data = o3d_img.data_;
-  ros_img.is_bigendian = !isLittleEndian();
+  ros_img.is_bigendian = rcpputils::endian::native == rcpputils::endian::big;
 }
 
 void open3dToRos(
@@ -227,7 +219,7 @@ void moveOpen3dToRos(
   ros_img.height = o3d_img.height_;
   ros_img.width = o3d_img.width_;
   ros_img.step = o3d_img.BytesPerLine();
-  ros_img.is_bigendian = !isLittleEndian();
+  ros_img.is_bigendian = rcpputils::endian::native == rcpputils::endian::big;
   ros_img.data = std::move(o3d_img.data_);
 
   // Make sure to leave everything in a well defined state

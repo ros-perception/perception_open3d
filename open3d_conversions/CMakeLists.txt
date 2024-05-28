@@ -13,6 +13,7 @@ find_package(Eigen3 REQUIRED)
 find_package(Open3D REQUIRED)
 
 find_package(rclcpp REQUIRED)
+find_package(rcpputils REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 include_directories(
@@ -28,6 +29,7 @@ target_include_directories(open3d_conversions PUBLIC
 ament_target_dependencies(
   open3d_conversions
   "rclcpp"
+  "rcpputils"
   "sensor_msgs"
 )
 target_link_libraries(open3d_conversions ${Open3D_LIBRARIES})

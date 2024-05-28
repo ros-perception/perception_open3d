@@ -17,6 +17,7 @@
 
   <depend>libopen3d-dev</depend>
   <depend>rclcpp</depend>
+  <depend>rcpputils</depend>
   <depend>sensor_msgs</depend>
   <depend>eigen</depend>
 
