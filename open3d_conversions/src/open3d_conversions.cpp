@@ -33,7 +33,7 @@ static void checkEncodingValidity(
     std::stringstream ss;
     ss << "Mismatch between Open3D image encoding and desired embedded encoding"
        << "You asked for \"" << encoding << "\" which has " << expected_num_channels
-       << "channels but the provided image had " << o3d_img.num_of_channels_ << " channels";
+       << " channels but the provided image had " << o3d_img.num_of_channels_ << " channels";
     throw std::runtime_error(ss.str());
   }
 
@@ -41,7 +41,7 @@ static void checkEncodingValidity(
     std::stringstream ss;
     ss << "Mismatch between Open3D image encoding and desired embedded encoding"
        << "You asked for \"" << encoding << "\" which has " << expected_bytes_per_channel
-       << "bytes per channel but the provided image had " << o3d_img.bytes_per_channel_
+       << " bytes per channel but the provided image had " << o3d_img.bytes_per_channel_
        << " bytes per channel";
     throw std::runtime_error(ss.str());
   }
