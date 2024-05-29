@@ -35,11 +35,11 @@ namespace open3d_conversions
 {
 /**
  * @brief Copy data from a open3d::geometry::PointCloud to a
- * sensor_msgs::msg::PointCloud2
+ * sensor_msgs::msg::PointCloud2. The header field of the output
+ * pointcloud is not modified, and must be filled out separately
  *
  * @param pointcloud Reference to the open3d geometry PointCloud
  * @param ros_pc2 Reference to the sensor_msgs PointCloud2
- * @param frame_id The string to be placed in the frame_id of the PointCloud2
  */
 void open3dToRos(
   const open3d::geometry::PointCloud & pointcloud,
@@ -47,12 +47,12 @@ void open3dToRos(
 
 /**
  * @brief Copy data from a open3d::geometry::Image to a
- * sensor_msgs::msg::Image
+ * sensor_msgs::msg::Image. The header field of the output
+ * image is not modified, and must be filled out separately
  *
  * @param image Reference to the open3d geometry Image
  * @param ros_img Reference to the sensor_msgs Image
  * @param encoding The encoding of the image to use in ROS format
- * @param frame_id The string to be placed in the frame_id of the Image
  */
 void open3dToRos(
   const open3d::geometry::Image & o3d_img,
@@ -61,11 +61,11 @@ void open3dToRos(
 
 /**
  * @brief Copy data from a open3d::camera::PinholeCameraIntrinsic
- * to a sensor_msgs::msg::CameraInfo
+ * to a sensor_msgs::msg::CameraInfo. The header field of the output
+ * camera info is not modified, and must be filled out separately
  *
  * @param intrinsic Reference to the camera intrinsic in open3d format
  * @param ros_img Reference to the sensor_msgs CameraInfo
- * @param frame_id The string to be placed in the frame_id of the Image
  *
  * @note Open3D does not record distortion parameters for its images, so
  * the sensor_msgs Image be labelled as "plumb_bob" with D values of 0
@@ -111,12 +111,12 @@ void rosToOpen3d(
 
 /**
  * @brief Move data from a open3d::geometry::Image to a
- * sensor_msgs::msg::Image
+ * sensor_msgs::msg::Image. The header field of the output
+ * image is not modified, and must be filled out separately
  *
  * @param o3d_img Reference to the open3d geometry Image
  * @param ros_img Reference to the sensor_msgs Image
  * @param encoding The encoding of the image to use in ROS format
- * @param frame_id The string to be placed in the frame_id of the Image
  *
  * @note The Open3D image will be in a well defined state after this
  * operation with width = height = 0, and an empty data vector
