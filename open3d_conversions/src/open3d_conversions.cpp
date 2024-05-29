@@ -185,13 +185,40 @@ void rosToOpen3d(
   const sensor_msgs::msg::Image & ros_img,
   open3d::geometry::Image & o3d_img)
 {
+  const int num_channels = sensor_msgs::image_encodings::numChannels(ros_img.encoding);
+  const int bytes_per_channel = sensor_msgs::image_encodings::bitDepth(ros_img.encoding) / 8;
+
   o3d_img.Prepare(
     ros_img.width,
     ros_img.height,
-    sensor_msgs::image_encodings::numChannels(ros_img.encoding),
-    sensor_msgs::image_encodings::bitDepth(ros_img.encoding) / 8
+    num_channels,
+    bytes_per_channel
   );
-  o3d_img.data_ = ros_img.data;
+
+  // Open3D requires the image to be in native endianness
+  if (ros_img.is_bigendian && rcpputils::endian::native == rcpputils::endian::big ||
+    !ros_img.is_bigendian && rcpputils::endian::native == rcpputils::endian::little ||
+    bytes_per_channel == 1)
+  {
+    o3d_img.data_ = ros_img.data;
+    return;
+  }
+
+  // Otherwise, flip the bytes of each channel entry
+  o3d_img.data_.clear();
+  o3d_img.data_.reserve(ros_img.data.size());
+  const std::ptrdiff_t data_step = bytes_per_channel * num_channels;
+  for (auto data_ptr = ros_img.data.begin(); data_ptr != ros_img.data.end();
+    std::advance(data_ptr, data_step))
+  {
+    for (std::ptrdiff_t channel_idx = 0; channel_idx < num_channels; ++channel_idx) {
+      const std::ptrdiff_t channel_start = channel_idx * bytes_per_channel;
+      for (std::ptrdiff_t byte_idx = 0; byte_idx < bytes_per_channel; ++byte_idx) {
+        const std::ptrdiff_t reverse_byte_idx = bytes_per_channel - byte_idx - 1;
+        o3d_img.data_.push_back(*(data_ptr + channel_start + reverse_byte_idx));
+      }
+    }
+  }
 }
 
 void rosToOpen3d(
@@ -230,6 +257,15 @@ void moveRosToOpen3d(
   sensor_msgs::msg::Image && ros_img,
   open3d::geometry::Image & o3d_img)
 {
+  // If the endianness does not match, we will need to perform a copy anyway
+  if ((ros_img.is_bigendian && rcpputils::endian::native == rcpputils::endian::little ||
+    !ros_img.is_bigendian && rcpputils::endian::native == rcpputils::endian::big) &&
+    sensor_msgs::image_encodings::bitDepth(ros_img.encoding) > 8)
+  {
+    rosToOpen3d(ros_img, o3d_img);
+    return;
+  }
+
   o3d_img.Prepare(
     ros_img.width,
     ros_img.height,
