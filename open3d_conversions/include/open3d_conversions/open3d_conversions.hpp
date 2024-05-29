@@ -43,8 +43,7 @@ namespace open3d_conversions
  */
 void open3dToRos(
   const open3d::geometry::PointCloud & pointcloud,
-  sensor_msgs::msg::PointCloud2 & ros_pc2,
-  std::string frame_id = "open3d_pointcloud");
+  sensor_msgs::msg::PointCloud2 & ros_pc2);
 
 /**
  * @brief Copy data from a open3d::geometry::Image to a
@@ -58,8 +57,7 @@ void open3dToRos(
 void open3dToRos(
   const open3d::geometry::Image & o3d_img,
   sensor_msgs::msg::Image & ros_img,
-  std::string encoding,
-  std::string frame_id = "open3d_image");
+  std::string encoding);
 
 /**
  * @brief Copy data from a open3d::camera::PinholeCameraIntrinsic
@@ -74,8 +72,7 @@ void open3dToRos(
  */
 void open3dToRos(
   const open3d::camera::PinholeCameraIntrinsic & intrinsic,
-  sensor_msgs::msg::CameraInfo & camera_info,
-  std::string frame_id = "open3d_image");
+  sensor_msgs::msg::CameraInfo & camera_info);
 
 /**
  * @brief Copy data from a sensor_msgs::msg::PointCloud2 to a
@@ -127,8 +124,7 @@ void rosToOpen3d(
 void moveOpen3dToRos(
   open3d::geometry::Image && o3d_img,
   sensor_msgs::msg::Image & ros_img,
-  std::string encoding,
-  std::string frame_id = "open3d_image");
+  std::string encoding);
 
 /**
  * @brief Move data from a sensor_msgs::msg::Image to a

@@ -37,7 +37,7 @@ TEST(ConversionFunctions, open3dToRos2_uncoloredPointcloud) {
     o3d_pc.points_.push_back(Eigen::Vector3d(0.5 * i, i * i, 10.5 * i));
   }
   sensor_msgs::msg::PointCloud2 ros_pc2;
-  open3d_conversions::open3dToRos(o3d_pc, ros_pc2, "o3d_frame");
+  open3d_conversions::open3dToRos(o3d_pc, ros_pc2);
   EXPECT_EQ(ros_pc2.height * ros_pc2.width, o3d_pc.points_.size());
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_x(ros_pc2, "x");
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_y(ros_pc2, "y");
@@ -57,7 +57,7 @@ TEST(ConversionFunctions, open3dToRos2_coloredPointcloud) {
       Eigen::Vector3d(2 * i / 255.0, 5 * i / 255.0, 10 * i / 255.0));
   }
   sensor_msgs::msg::PointCloud2 ros_pc2;
-  open3d_conversions::open3dToRos(o3d_pc, ros_pc2, "o3d_frame");
+  open3d_conversions::open3dToRos(o3d_pc, ros_pc2);
   EXPECT_EQ(ros_pc2.height * ros_pc2.width, o3d_pc.points_.size());
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_x(ros_pc2, "x");
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_y(ros_pc2, "y");

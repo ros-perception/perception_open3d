@@ -51,7 +51,7 @@ namespace open3d_conversions
 {
 void open3dToRos(
   const open3d::geometry::PointCloud & pointcloud,
-  sensor_msgs::msg::PointCloud2 & ros_pc2, std::string frame_id)
+  sensor_msgs::msg::PointCloud2 & ros_pc2)
 {
   sensor_msgs::PointCloud2Modifier modifier(ros_pc2);
   if (pointcloud.HasColors()) {
@@ -60,7 +60,6 @@ void open3dToRos(
     modifier.setPointCloud2FieldsByString(1, "xyz");
   }
   modifier.resize(pointcloud.points_.size());
-  ros_pc2.header.frame_id = frame_id;
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_x(ros_pc2, "x");
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_y(ros_pc2, "y");
   sensor_msgs::PointCloud2Iterator<float> ros_pc2_z(ros_pc2, "z");
@@ -96,12 +95,10 @@ void open3dToRos(
 void open3dToRos(
   const open3d::geometry::Image & o3d_img,
   sensor_msgs::msg::Image & ros_img,
-  std::string encoding,
-  std::string frame_id)
+  std::string encoding)
 {
   checkEncodingValidity(encoding, o3d_img);
   ros_img.encoding = encoding;
-  ros_img.header.frame_id = frame_id;
   ros_img.height = o3d_img.height_;
   ros_img.width = o3d_img.width_;
   ros_img.step = o3d_img.BytesPerLine();
@@ -111,8 +108,7 @@ void open3dToRos(
 
 void open3dToRos(
   const open3d::camera::PinholeCameraIntrinsic & intrinsic,
-  sensor_msgs::msg::CameraInfo & camera_info,
-  std::string frame_id)
+  sensor_msgs::msg::CameraInfo & camera_info)
 {
   // Intrinsic matrix is 3x3 row-major
   std::fill(camera_info.k.begin(), camera_info.k.end(), 0.0);
@@ -237,12 +233,10 @@ void rosToOpen3d(
 void moveOpen3dToRos(
   open3d::geometry::Image && o3d_img,
   sensor_msgs::msg::Image & ros_img,
-  std::string encoding,
-  std::string frame_id)
+  std::string encoding)
 {
   checkEncodingValidity(encoding, o3d_img);
   ros_img.encoding = encoding;
-  ros_img.header.frame_id = frame_id;
   ros_img.height = o3d_img.height_;
   ros_img.width = o3d_img.width_;
   ros_img.step = o3d_img.BytesPerLine();
