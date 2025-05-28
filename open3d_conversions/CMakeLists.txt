@@ -8,30 +8,24 @@ endif()
 
 # system dependencies
 find_package(ament_cmake REQUIRED)
-find_package(Eigen3 REQUIRED)
+find_package(Eigen3 REQUIRED NO_MODULE)
 find_package(Open3D REQUIRED)
 
 find_package(rclcpp REQUIRED)
 find_package(rcpputils REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
-include_directories(
-  include
-  ${EIGEN3_INCLUDE_DIR}
-  ${Open3D_INCLUDE_DIRS}
-)
-
 add_library(open3d_conversions src/open3d_conversions.cpp)
 target_include_directories(open3d_conversions PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(
-  open3d_conversions
-  "rclcpp"
-  "rcpputils"
-  "sensor_msgs"
+target_link_libraries(open3d_conversions
+  rclcpp::rclcpp
+  rcpputils::rcpputils
+  ${sensor_msgs_TARGETS}
+  Eigen3::Eigen
+  Open3D::Open3D
 )
-target_link_libraries(open3d_conversions ${Open3D_LIBRARIES})
 target_compile_definitions(open3d_conversions PUBLIC "OPEN3D_CONVERSIONS_BUILDING_LIBRARY")
 
 install(
@@ -58,6 +52,6 @@ endif()
 ament_export_include_directories(include)
 ament_export_libraries(open3d_conversions)
 ament_export_targets(export_${PROJECT_NAME})
-ament_export_dependencies(Open3D rclcpp)
+ament_export_dependencies(Eigen3 Open3D rclcpp rcpputils sensor_msgs)
 
 ament_package()
