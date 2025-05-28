@@ -8,7 +8,6 @@ endif()
 
 # system dependencies
 find_package(ament_cmake REQUIRED)
-find_package(ament_cmake_ros REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Open3D REQUIRED)
 
