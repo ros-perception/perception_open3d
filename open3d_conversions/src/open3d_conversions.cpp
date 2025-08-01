@@ -53,43 +53,38 @@ void open3dToRos(
   const open3d::geometry::PointCloud & pointcloud,
   sensor_msgs::msg::PointCloud2 & ros_pc2)
 {
-  sensor_msgs::PointCloud2Modifier modifier(ros_pc2);
-  modifier.clear();
-  modifier.setPointCloud2FieldsByString(1, "xyz");
+  // Clear the input pointcloud to prepare it to be set
+  std_msgs::msg::Header pc_header = ros_pc2.header;
+  ros_pc2 = sensor_msgs::msg::PointCloud2{};
+  ros_pc2.header = pc_header;
 
-  ros_pc2.point_step = 12;
-  if (pointcloud.HasColors()) {
-    sensor_msgs::msg::PointField & rgb_field = ros_pc2.fields.emplace_back();
-    rgb_field.count = 1;
-    rgb_field.datatype = sensor_msgs::msg::PointField::FLOAT32;
-    rgb_field.name = "rgb";
-    rgb_field.offset = ros_pc2.point_step;
+  // We define a lambda for new fields to avoid code repetition
+  // This only works because all our fields have the same structure
+  auto add_new_field = [&ros_pc2](const std::string& field_name) {
+    sensor_msgs::msg::PointField & new_field = ros_pc2.fields.emplace_back();
+    new_field.count = 1;
+    new_field.datatype = sensor_msgs::msg::PointField::FLOAT32;
+    new_field.name = field_name;
+    new_field.offset = ros_pc2.point_step;
     ros_pc2.point_step += 4;
+  };  
+
+  add_new_field("x");
+  add_new_field("y");
+  add_new_field("z");
+
+  if (pointcloud.HasColors()) {
+    // Note that the RGB field is typically packed as a single FLOAT32 value
+    add_new_field("rgb");
   }
 
   if (pointcloud.HasNormals()) {
-    sensor_msgs::msg::PointField & nx_field = ros_pc2.fields.emplace_back();
-    nx_field.count = 1;
-    nx_field.datatype = sensor_msgs::msg::PointField::FLOAT32;
-    nx_field.name = "normal_x";
-    nx_field.offset = ros_pc2.point_step;
-    ros_pc2.point_step += 4;
-
-    sensor_msgs::msg::PointField & ny_field = ros_pc2.fields.emplace_back();
-    ny_field.count = 1;
-    ny_field.datatype = sensor_msgs::msg::PointField::FLOAT32;
-    ny_field.name = "normal_y";
-    ny_field.offset = ros_pc2.point_step;
-    ros_pc2.point_step += 4;
-
-    sensor_msgs::msg::PointField & nz_field = ros_pc2.fields.emplace_back();
-    nz_field.count = 1;
-    nz_field.datatype = sensor_msgs::msg::PointField::FLOAT32;
-    nz_field.name = "normal_z";
-    nz_field.offset = ros_pc2.point_step;
-    ros_pc2.point_step += 4;
+    add_new_field("normal_x");
+    add_new_field("normal_y");
+    add_new_field("normal_z");
   }
 
+  // Set the parameters known from the open3d pointcloud definition
   ros_pc2.height = 1;
   ros_pc2.width = pointcloud.points_.size();
   ros_pc2.row_step = ros_pc2.width * ros_pc2.point_step;
@@ -97,12 +92,19 @@ void open3dToRos(
   ros_pc2.is_dense = true;
   ros_pc2.data.resize(ros_pc2.row_step);
 
-  float * ros_it = reinterpret_cast<float *>(ros_pc2.data.data());  // Technically UB
+  // For clarity we set up this lambda to cleanly set the value and advance the pointer
+  auto * ros_it = ros_pc2.data.data();
+  auto set_next_value = [&ros_it](const auto& value) {
+    std::memcpy(ros_it, &value, sizeof(value));
+    std::advance(ros_it, sizeof(value));
+  };
+
   for (std::size_t idx = 0; idx < pointcloud.points_.size(); ++idx) {
-    const Eigen::Vector3d & point_xyz = pointcloud.points_[idx];
-    *ros_it++ = static_cast<float>(point_xyz.x());
-    *ros_it++ = static_cast<float>(point_xyz.y());
-    *ros_it++ = static_cast<float>(point_xyz.z());
+    const Eigen::Vector3f point_xyz = pointcloud.points_[idx].cast<float>();
+    if (point_xyz.hasNaN()) ros_pc2.is_dense = false;
+    set_next_value(point_xyz.x());
+    set_next_value(point_xyz.y());
+    set_next_value(point_xyz.z());
 
     if (pointcloud.HasColors()) {
       const Eigen::Vector3d & point_rgb = pointcloud.colors_[idx];
@@ -110,14 +112,14 @@ void open3dToRos(
       const uint8_t g = static_cast<uint8_t>(255 * point_rgb(1));
       const uint8_t b = static_cast<uint8_t>(255 * point_rgb(2));
       const uint32_t rgb = (rcpputils::endian::native == rcpputils::endian::big) ? (b << 24 | g << 16 | r << 8) : (r << 16 | g << 8 | b);
-      std::memcpy(ros_it++, &rgb, sizeof(float));
+      set_next_value(rgb);
     }
 
     if (pointcloud.HasNormals()) {
-      const Eigen::Vector3d & point_normal = pointcloud.normals_[idx];
-      *ros_it++ = static_cast<float>(point_normal.x());
-      *ros_it++ = static_cast<float>(point_normal.y());
-      *ros_it++ = static_cast<float>(point_normal.z());
+      const Eigen::Vector3f point_normal = pointcloud.normals_[idx].cast<float>();
+      set_next_value(point_normal.x());
+      set_next_value(point_normal.y());
+      set_next_value(point_normal.z());
     }
   }
 }
