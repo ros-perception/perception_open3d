@@ -5,6 +5,7 @@ project(open3d_conversions)
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # system dependencies
 find_package(ament_cmake REQUIRED)
