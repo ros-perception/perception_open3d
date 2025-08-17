@@ -60,14 +60,14 @@ void open3dToRos(
 
   // We define a lambda for new fields to avoid code repetition
   // This only works because all our fields have the same structure
-  auto add_new_field = [&ros_pc2](const std::string& field_name) {
-    sensor_msgs::msg::PointField & new_field = ros_pc2.fields.emplace_back();
-    new_field.count = 1;
-    new_field.datatype = sensor_msgs::msg::PointField::FLOAT32;
-    new_field.name = field_name;
-    new_field.offset = ros_pc2.point_step;
-    ros_pc2.point_step += 4;
-  };  
+  auto add_new_field = [&ros_pc2](const std::string & field_name) {
+      sensor_msgs::msg::PointField & new_field = ros_pc2.fields.emplace_back();
+      new_field.count = 1;
+      new_field.datatype = sensor_msgs::msg::PointField::FLOAT32;
+      new_field.name = field_name;
+      new_field.offset = ros_pc2.point_step;
+      ros_pc2.point_step += 4;
+    };
 
   add_new_field("x");
   add_new_field("y");
@@ -94,14 +94,14 @@ void open3dToRos(
 
   // For clarity we set up this lambda to cleanly set the value and advance the pointer
   auto * ros_it = ros_pc2.data.data();
-  auto set_next_value = [&ros_it](const auto& value) {
-    std::memcpy(ros_it, &value, sizeof(value));
-    std::advance(ros_it, sizeof(value));
-  };
+  auto set_next_value = [&ros_it](const auto & value) {
+      std::memcpy(ros_it, &value, sizeof(value));
+      std::advance(ros_it, sizeof(value));
+    };
 
   for (std::size_t idx = 0; idx < pointcloud.points_.size(); ++idx) {
     const Eigen::Vector3f point_xyz = pointcloud.points_[idx].cast<float>();
-    if (point_xyz.hasNaN()) ros_pc2.is_dense = false;
+    if (point_xyz.hasNaN()) {ros_pc2.is_dense = false;}
     set_next_value(point_xyz.x());
     set_next_value(point_xyz.y());
     set_next_value(point_xyz.z());
@@ -111,7 +111,9 @@ void open3dToRos(
       const uint8_t r = static_cast<uint8_t>(255 * point_rgb(0));
       const uint8_t g = static_cast<uint8_t>(255 * point_rgb(1));
       const uint8_t b = static_cast<uint8_t>(255 * point_rgb(2));
-      const uint32_t rgb = (rcpputils::endian::native == rcpputils::endian::big) ? (b << 24 | g << 16 | r << 8) : (r << 16 | g << 8 | b);
+      const uint32_t rgb = (rcpputils::endian::native == rcpputils::endian::big) ?
+        (b << 24 | g << 16 | r << 8) :
+        (r << 16 | g << 8 | b);
       set_next_value(rgb);
     }
 
