@@ -18,7 +18,9 @@
 #include <Eigen/Dense>
 
 // Open3D
-#include <open3d/Open3D.h>
+#include <open3d/geometry/Image.h>
+#include <open3d/geometry/PointCloud.h>
+#include <open3d/camera/PinholeCameraIntrinsic.h>
 
 // C++
 #include <string>
