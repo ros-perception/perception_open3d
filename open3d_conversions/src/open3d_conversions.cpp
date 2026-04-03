@@ -178,9 +178,13 @@ void rosToOpen3d(
     o3d_pc.points_.push_back(Eigen::Vector3d(*ros_pc2_x, *ros_pc2_y, *ros_pc2_z));
   }
 
-  auto hasField = [&ros_pc2](const std::string& name) {
-    return std::any_of(ros_pc2->fields.begin(), ros_pc2->fields.end(), [&name](const sensor_msgs::msg::PointField& field){return field.name == name;});
-  };
+  auto hasField = [&ros_pc2](const std::string & name) {
+      return std::any_of(
+        ros_pc2->fields.begin(),
+        ros_pc2->fields.end(),
+        [&name](const sensor_msgs::msg::PointField & field) {return field.name == name;}
+      );
+    };
 
   // Add normals if the input cloud has normals
   if (hasField("normal_x") && hasField("normal_y") && hasField("normal_z")) {
@@ -200,14 +204,14 @@ void rosToOpen3d(
     sensor_msgs::PointCloud2ConstIterator<uint8_t> ros_pc2_b(*ros_pc2, "b");
     o3d_pc.colors_.reserve(num_points);
     for (std::size_t i = 0; i < num_points; ++i, ++ros_pc2_r, ++ros_pc2_g, ++ros_pc2_b) {
-      o3d_pc.colors_.push_back(Eigen::Vector3d(
-            (static_cast<int>(*ros_pc2_r)) / 255.0,
-            (static_cast<int>(*ros_pc2_g)) / 255.0,
-            (static_cast<int>(*ros_pc2_b)) / 255.0));
+      o3d_pc.colors_.push_back(
+        Eigen::Vector3d(
+          (static_cast<int>(*ros_pc2_r)) / 255.0,
+          (static_cast<int>(*ros_pc2_g)) / 255.0,
+          (static_cast<int>(*ros_pc2_b)) / 255.0));
     }
-  }   
-  // Add intensity as a color if the input cloud has intesity
-  else if (hasField("intensity")) {
+  } else if (hasField("intensity")) {
+    // Add intensity as a color if the input cloud has intesity
     sensor_msgs::PointCloud2ConstIterator<uint8_t> ros_pc2_i(*ros_pc2, "intensity");
     o3d_pc.colors_.reserve(num_points);
     for (std::size_t i = 0; i < num_points; ++i, ++ros_pc2_i) {
